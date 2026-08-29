@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DopaDopa | マイアカウント</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="account-page-shell">
+      <header class="account-topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">D</div>
+          <div>
+            <p class="brand-name">DopaDopa</p>
+            <p class="brand-sub">マイアカウント</p>
+          </div>
+        </div>
+        <div class="account-actions">
+          <button id="logoutButton" class="text-button" type="button">ログアウト</button>
+        </div>
+      </header>
+
+      <main class="account-content">
+        <section class="account-card card">
+          <div class="account-avatar">👤</div>
+          <p class="account-label">ユーザーネーム</p>
+          <h1 id="accountUsername">ユーザー</h1>
+          <p class="account-description">あなたのデトックス記録とポイントの進捗を管理できます。</p>
+
+          <div class="account-stats">
+            <div>
+              <span>累計ポイント</span>
+              <strong>1,280P</strong>
+            </div>
+            <div>
+              <span>連続日数</span>
+              <strong>12日</strong>
+            </div>
+            <div>
+              <span>現在の目標</span>
+              <strong>180分</strong>
+            </div>
+          </div>
+
+          <div class="account-actions-row">
+            <button id="viewDashboardButton" class="primary-button" type="button">ポイントをためる</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="account.js"></script>
+  </body>
+</html>

@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'dopadopa-state';
+const USER_KEY = 'dopadopa-user';
 const DAILY_GOAL_SECONDS = 180 * 60;
 const POINTS_PER_MINUTE = 1;
 
@@ -34,9 +35,50 @@ const goalMinutesInput = document.getElementById('goalMinutesInput');
 const closeGoalModalButton = document.getElementById('closeGoalModal');
 const cancelGoalSettingButton = document.getElementById('cancelGoalSetting');
 const saveGoalSettingButton = document.getElementById('saveGoalSetting');
+const loginScreen = document.getElementById('loginScreen');
+const appContainer = document.getElementById('appContainer');
+const loginForm = document.getElementById('loginForm');
+const usernameInput = document.getElementById('usernameInput');
+const welcomeUser = document.getElementById('welcomeUser');
+const logoutButton = document.getElementById('logoutButton');
 
 const saveState = () => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+};
+
+const getCurrentUser = () => localStorage.getItem(USER_KEY) || '';
+
+const showApp = () => {
+  if (loginScreen) loginScreen.classList.add('hidden');
+  if (appContainer) appContainer.classList.remove('hidden');
+
+  const currentUser = getCurrentUser();
+  if (welcomeUser && currentUser) {
+    welcomeUser.textContent = `${currentUser} さんの記録`;
+  }
+};
+
+const showLogin = () => {
+  if (appContainer) appContainer.classList.add('hidden');
+  if (loginScreen) loginScreen.classList.remove('hidden');
+};
+
+const handleLogin = (event) => {
+  event.preventDefault();
+  const username = usernameInput?.value.trim();
+
+  if (!username) {
+    return;
+  }
+
+  localStorage.setItem(USER_KEY, username);
+  window.location.href = 'account.html';
+};
+
+const handleLogout = () => {
+  localStorage.removeItem(USER_KEY);
+  if (usernameInput) usernameInput.value = '';
+  showLogin();
 };
 
 const loadState = () => {
@@ -102,30 +144,36 @@ const renderHistory = () => {
 };
 
 const updateUI = () => {
+  if (!appContainer || appContainer.classList.contains('hidden')) {
+    return;
+  }
+
   const totalTrackedSeconds = Math.round(state.phoneFreeSeconds + state.powerOffSeconds);
   const totalPoints = Math.floor((totalTrackedSeconds / 60) * POINTS_PER_MINUTE);
   const goalSeconds = getGoalSeconds();
   const screenTimeSeconds = 3 * 60 * 60 + 40 * 60; // Android-like example value
   const digitalDetoxSeconds = 7 * 60 * 60 + 20 * 60; // example value for no-phone time
 
-  pointsDisplay.textContent = formatPoints(totalPoints);
-  phoneFreeDisplay.textContent = formatDuration(state.phoneFreeSeconds);
-  powerOffDisplay.textContent = formatDuration(state.powerOffSeconds);
-  screenTimeDisplay.textContent = formatDuration(screenTimeSeconds);
-  digitalDetoxDisplay.textContent = formatDuration(digitalDetoxSeconds);
-  dailyTarget.textContent = `${Math.floor(goalSeconds / 60)}分`;
-  weeklyPoints.textContent = '2,480P';
-  bestRecord.textContent = '4h 30m';
+  if (pointsDisplay) pointsDisplay.textContent = formatPoints(totalPoints);
+  if (phoneFreeDisplay) phoneFreeDisplay.textContent = formatDuration(state.phoneFreeSeconds);
+  if (powerOffDisplay) powerOffDisplay.textContent = formatDuration(state.powerOffSeconds);
+  if (screenTimeDisplay) screenTimeDisplay.textContent = formatDuration(screenTimeSeconds);
+  if (digitalDetoxDisplay) digitalDetoxDisplay.textContent = formatDuration(digitalDetoxSeconds);
+  if (dailyTarget) dailyTarget.textContent = `${Math.floor(goalSeconds / 60)}分`;
+  if (weeklyPoints) weeklyPoints.textContent = '2,480P';
+  if (bestRecord) bestRecord.textContent = '4h 30m';
 
   const remainingSeconds = Math.max(goalSeconds - totalTrackedSeconds, 0);
   const remainingMinutes = Math.ceil(remainingSeconds / 60);
   const goalText = remainingSeconds === 0 ? '目標達成！' : `あと ${remainingMinutes}分`;
-  dailyProgressText.textContent = goalText;
+  if (dailyProgressText) dailyProgressText.textContent = goalText;
 
   const ratio = Math.min(totalTrackedSeconds / goalSeconds, 1);
-  ringProgress.style.strokeDasharray = `${2 * Math.PI * 82}`;
-  ringProgress.style.strokeDashoffset = `${2 * Math.PI * 82 - 2 * Math.PI * 82 * ratio}`;
-  goalRatio.textContent = `${Math.round(ratio * 100)}%`;
+  if (ringProgress) {
+    ringProgress.style.strokeDasharray = `${2 * Math.PI * 82}`;
+    ringProgress.style.strokeDashoffset = `${2 * Math.PI * 82 - 2 * Math.PI * 82 * ratio}`;
+  }
+  if (goalRatio) goalRatio.textContent = `${Math.round(ratio * 100)}%`;
 };
 
 const tick = () => {
@@ -270,6 +318,12 @@ initializeSvgGradient();
 renderHistory();
 updateUI();
 
+if (getCurrentUser()) {
+  showApp();
+} else {
+  showLogin();
+}
+
 if (state.isTracking) {
   toggleTrackingButton.textContent = '集中終了';
 }
@@ -299,6 +353,12 @@ if (cancelGoalSettingButton) {
 }
 if (saveGoalSettingButton) {
   saveGoalSettingButton.addEventListener('click', saveGoalTime);
+}
+if (loginForm) {
+  loginForm.addEventListener('submit', handleLogin);
+}
+if (logoutButton) {
+  logoutButton.addEventListener('click', handleLogout);
 }
 if (goalModal) {
   goalModal.addEventListener('click', (event) => {

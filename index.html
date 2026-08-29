@@ -17,18 +17,33 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="page-shell">
+    <div id="loginScreen" class="auth-screen">
+      <div class="auth-card">
+        <div class="auth-badge">D</div>
+        <p class="eyebrow auth-eyebrow">Welcome</p>
+        <h2>DopaDopa</h2>
+        <p class="auth-subtitle">ユーザーネームを登録して、あなたのデトックス記録を開始しましょう。</p>
+
+        <form id="loginForm" class="auth-form">
+          <label for="usernameInput" class="auth-label">ユーザーネーム</label>
+          <input id="usernameInput" type="text" maxlength="20" placeholder="例: yuki" required />
+          <button type="submit" class="auth-submit">アカウント作成</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="appContainer" class="page-shell hidden">
       <header class="topbar">
         <div class="brand-wrap">
           <div class="brand-mark">D</div>
           <div>
             <p class="brand-name">DopaDopa</p>
-            <p class="brand-sub">スマホを見ない時間が、今日のご褒美に</p>
+            <p id="welcomeUser" class="brand-sub">スマホを見ない時間が、今日のご褒美に</p>
           </div>
         </div>
         <div class="header-actions">
           <button id="goalSettingButton" class="text-button" type="button">目標時間設定</button>
-          <button class="text-button" type="button">ログアウト</button>
+          <button id="logoutButton" class="text-button" type="button">ログアウト</button>
         </div>
       </header>
 
@@ -75,7 +90,7 @@
                 <strong id="screenTimeDisplay">03:40:00</strong>
               </div>
               <div>
-                <span>デジタルデトック</span>
+                <span>デジタルデトックスタイム</span>
                 <strong id="digitalDetoxDisplay">07:20:00</strong>
               </div>
               <div>
