@@ -1,5 +1,7 @@
 const STORAGE_KEY = 'dopadopa-state';
 const USER_KEY = 'dopadopa-user';
+const ACCOUNTS_KEY = 'dopadopa-accounts';
+const DEVICE_ID_KEY = 'dopadopa-device-id';
 const DAILY_GOAL_SECONDS = 180 * 60;
 const POINTS_PER_MINUTE = 1;
 
@@ -42,11 +44,99 @@ const usernameInput = document.getElementById('usernameInput');
 const welcomeUser = document.getElementById('welcomeUser');
 const logoutButton = document.getElementById('logoutButton');
 
+const syncCurrentDeviceMetrics = () => {
+  const username = getCurrentUser();
+  if (!username) {
+    return;
+  }
+
+  const profiles = getAccountProfiles();
+  const account = profiles[username] || { devices: {} };
+  const deviceId = getDeviceId();
+  const digitalDetoxSeconds = Math.max(0, Number(state.phoneFreeSeconds || 0) + Number(state.powerOffSeconds || 0));
+  const screenTimeSeconds = Math.max(0, 24 * 60 * 60 - digitalDetoxSeconds);
+
+  account.devices[deviceId] = {
+    screenTimeSeconds,
+    digitalDetoxSeconds,
+  };
+
+  profiles[username] = account;
+  saveAccountProfiles(profiles);
+};
+
 const saveState = () => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  syncCurrentDeviceMetrics();
 };
 
 const getCurrentUser = () => localStorage.getItem(USER_KEY) || '';
+
+const getAccountProfiles = () => {
+  try {
+    return JSON.parse(localStorage.getItem(ACCOUNTS_KEY) || '{}');
+  } catch (error) {
+    console.error('Failed to parse account profiles', error);
+    return {};
+  }
+};
+
+const saveAccountProfiles = (profiles) => {
+  localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(profiles));
+};
+
+const getDeviceId = () => {
+  let deviceId = localStorage.getItem(DEVICE_ID_KEY);
+  if (!deviceId) {
+    deviceId = `device-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
+    localStorage.setItem(DEVICE_ID_KEY, deviceId);
+  }
+  return deviceId;
+};
+
+const ensureAccountProfile = (username) => {
+  const profiles = getAccountProfiles();
+  const safeUsername = String(username || '').trim();
+
+  if (!safeUsername) {
+    return null;
+  }
+
+  if (!profiles[safeUsername]) {
+    profiles[safeUsername] = { devices: {} };
+  }
+
+  saveAccountProfiles(profiles);
+  return profiles[safeUsername];
+};
+
+const getCurrentDeviceMetrics = () => {
+  const username = getCurrentUser();
+  if (!username) {
+    return { screenTimeSeconds: 0, digitalDetoxSeconds: 0 };
+  }
+
+  const profiles = getAccountProfiles();
+  const account = profiles[username] || { devices: {} };
+  const deviceId = getDeviceId();
+
+  if (!account.devices[deviceId]) {
+    account.devices[deviceId] = { screenTimeSeconds: 0, digitalDetoxSeconds: 0 };
+  }
+
+  const digitalDetoxSeconds = Math.max(0, Math.round(state.phoneFreeSeconds + state.powerOffSeconds));
+  const screenTimeSeconds = Math.max(0, 24 * 60 * 60 - digitalDetoxSeconds);
+
+  const deviceStats = account.devices[deviceId];
+  deviceStats.digitalDetoxSeconds = Math.max(deviceStats.digitalDetoxSeconds, digitalDetoxSeconds);
+  deviceStats.screenTimeSeconds = Math.max(deviceStats.screenTimeSeconds, screenTimeSeconds);
+
+  account.devices[deviceId] = deviceStats;
+  profiles[username] = account;
+  saveAccountProfiles(profiles);
+
+  return deviceStats;
+};
 
 const showApp = () => {
   if (loginScreen) loginScreen.classList.add('hidden');
@@ -71,6 +161,7 @@ const handleLogin = (event) => {
     return;
   }
 
+  ensureAccountProfile(username);
   localStorage.setItem(USER_KEY, username);
   window.location.href = 'account.html';
 };
@@ -151,8 +242,9 @@ const updateUI = () => {
   const totalTrackedSeconds = Math.round(state.phoneFreeSeconds + state.powerOffSeconds);
   const totalPoints = Math.floor((totalTrackedSeconds / 60) * POINTS_PER_MINUTE);
   const goalSeconds = getGoalSeconds();
-  const screenTimeSeconds = 3 * 60 * 60 + 40 * 60; // Android-like example value
-  const digitalDetoxSeconds = 7 * 60 * 60 + 20 * 60; // example value for no-phone time
+  const metrics = getCurrentDeviceMetrics();
+  const screenTimeSeconds = metrics.screenTimeSeconds;
+  const digitalDetoxSeconds = metrics.digitalDetoxSeconds;
 
   if (pointsDisplay) pointsDisplay.textContent = formatPoints(totalPoints);
   if (phoneFreeDisplay) phoneFreeDisplay.textContent = formatDuration(state.phoneFreeSeconds);
