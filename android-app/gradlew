@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+
+DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+APP_HOME="$DIR"
+CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
+
+if [ ! -f "$CLASSPATH" ]; then
+  echo "Gradle wrapper not found. Please install Gradle or generate wrapper first." >&2
+  exit 1
+fi
+
+exec java -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"

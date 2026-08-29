@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DopaDopa | スマホフリーでポイント</title>
+    <meta
+      name="description"
+      content="1日のスマホを見ていない時間でポイントがたまるウェブアプリのモック"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">D</div>
+          <div>
+            <p class="brand-name">DopaDopa</p>
+            <p class="brand-sub">スマホを見ない時間が、今日のご褒美に</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="goalSettingButton" class="text-button" type="button">目標時間設定</button>
+          <button class="text-button" type="button">ログアウト</button>
+        </div>
+      </header>
+
+      <div id="goalModal" class="goal-modal hidden" aria-hidden="true">
+        <div class="goal-modal-card">
+          <div class="goal-modal-header">
+            <h3>目標時間を設定</h3>
+            <button id="closeGoalModal" class="close-button" type="button" aria-label="閉じる">×</button>
+          </div>
+          <label class="goal-input-label" for="goalMinutesInput">目標時間（分）</label>
+          <input id="goalMinutesInput" type="number" min="1" step="1" value="180" />
+          <div class="goal-modal-actions">
+            <button id="cancelGoalSetting" class="secondary-action" type="button">キャンセル</button>
+            <button id="saveGoalSetting" class="primary-action" type="button">保存</button>
+          </div>
+        </div>
+      </div>
+
+      <main class="app-layout">
+        <section class="hero card">
+          <div class="hero-copy">
+            <p class="eyebrow">今日の達成度</p>
+            <h1>スマホフリー時間で<br />点数が貯まる</h1>
+            <p class="hero-text">
+              1分スマホを見ないごとにポイントが増える。<br />
+              今日の休憩時間を、気持ちよく自分に還元しよう。
+            </p>
+          </div>
+
+          <div class="ring-panel">
+            <div class="progress-ring">
+              <svg viewBox="0 0 220 220" aria-hidden="true">
+                <circle class="ring-bg" cx="110" cy="110" r="82"></circle>
+                <circle id="ringProgress" class="ring-progress" cx="110" cy="110" r="82"></circle>
+              </svg>
+              <div class="ring-center">
+                <span class="ring-label">累計</span>
+                <strong id="pointsDisplay">0P</strong>
+              </div>
+            </div>
+            <div class="mini-stats">
+              <div>
+                <span>スクリーンタイム</span>
+                <strong id="screenTimeDisplay">03:40:00</strong>
+              </div>
+              <div>
+                <span>デジタルデトック</span>
+                <strong id="digitalDetoxDisplay">07:20:00</strong>
+              </div>
+              <div>
+                <span>目標達成率</span>
+                <strong id="goalRatio">0%</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="stats-grid">
+          <article class="stat-card card">
+            <p>今週の獲得ポイント</p>
+            <h2 id="weeklyPoints">2,480P</h2>
+            <span class="trend positive">+320P 今週</span>
+          </article>
+
+          <article class="stat-card card">
+            <p>最高記録</p>
+            <h2 id="bestRecord">4h 30m</h2>
+            <span class="trend neutral">月曜日</span>
+          </article>
+
+          <article class="stat-card card">
+            <p>今日の目標</p>
+            <h2 id="dailyTarget">180分</h2>
+            <span id="dailyProgressText" class="trend positive">あと 80分</span>
+          </article>
+        </section>
+
+        <section class="bottom-grid">
+          <article class="card activity-card">
+            <div class="section-header">
+              <h3>今日の記録</h3>
+              <span class="badge success">継続中</span>
+            </div>
+            <ul class="timeline" id="historyList">
+              <li>
+                <span class="time">08:15</span>
+                <span class="event">朝の通知を見ない時間を維持</span>
+                <span class="points">+30P</span>
+              </li>
+              <li>
+                <span class="time">12:40</span>
+                <span class="event">昼休みをスマホなしで過ごす</span>
+                <span class="points">+25P</span>
+              </li>
+              <li>
+                <span class="time">19:10</span>
+                <span class="event">夕食中のスマホチェックを回避</span>
+                <span class="points">+45P</span>
+              </li>
+            </ul>
+          </article>
+
+          <article class="card rewards-card">
+            <div class="section-header">
+              <h3>獲得できる特典</h3>
+            </div>
+            <div class="reward-row">
+              <div class="reward-badge">☕</div>
+              <div>
+                <strong>カフェ無料ドリンク</strong>
+                <p>1,200P</p>
+              </div>
+            </div>
+            <div class="reward-row">
+              <div class="reward-badge">🎧</div>
+              <div>
+                <strong>サブスク割引</strong>
+                <p>2,500P</p>
+              </div>
+            </div>
+            <div class="reward-row">
+              <div class="reward-badge">✨</div>
+              <div>
+                <strong>限定イベント参加権</strong>
+                <p>4,800P</p>
+              </div>
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
