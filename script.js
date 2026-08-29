@@ -8,7 +8,9 @@ const POINTS_PER_MINUTE = 1;
 const state = {
   isTracking: false,
   phoneFreeSeconds: 0,
+  screenTimeSeconds: 0,
   lastStartedAt: null,
+  screenTimeStartedAt: null,
   isPowerOff: false,
   powerOffSeconds: 0,
   powerOffStartedAt: null,
@@ -54,7 +56,7 @@ const syncCurrentDeviceMetrics = () => {
   const account = profiles[username] || { devices: {} };
   const deviceId = getDeviceId();
   const digitalDetoxSeconds = Math.max(0, Number(state.phoneFreeSeconds || 0) + Number(state.powerOffSeconds || 0));
-  const screenTimeSeconds = Math.max(0, 24 * 60 * 60 - digitalDetoxSeconds);
+  const screenTimeSeconds = Math.max(0, Number(state.screenTimeSeconds || 0));
 
   account.devices[deviceId] = {
     screenTimeSeconds,
@@ -125,11 +127,11 @@ const getCurrentDeviceMetrics = () => {
   }
 
   const digitalDetoxSeconds = Math.max(0, Math.round(state.phoneFreeSeconds + state.powerOffSeconds));
-  const screenTimeSeconds = Math.max(0, 24 * 60 * 60 - digitalDetoxSeconds);
+  const screenTimeSeconds = Math.max(0, Number(state.screenTimeSeconds || 0));
 
   const deviceStats = account.devices[deviceId];
-  deviceStats.digitalDetoxSeconds = Math.max(deviceStats.digitalDetoxSeconds, digitalDetoxSeconds);
-  deviceStats.screenTimeSeconds = Math.max(deviceStats.screenTimeSeconds, screenTimeSeconds);
+  deviceStats.digitalDetoxSeconds = Math.max(Number(deviceStats.digitalDetoxSeconds) || 0, digitalDetoxSeconds);
+  deviceStats.screenTimeSeconds = Math.max(Number(deviceStats.screenTimeSeconds) || 0, screenTimeSeconds);
 
   account.devices[deviceId] = deviceStats;
   profiles[username] = account;
@@ -243,8 +245,8 @@ const updateUI = () => {
   const totalPoints = Math.floor((totalTrackedSeconds / 60) * POINTS_PER_MINUTE);
   const goalSeconds = getGoalSeconds();
   const metrics = getCurrentDeviceMetrics();
-  const screenTimeSeconds = metrics.screenTimeSeconds;
-  const digitalDetoxSeconds = metrics.digitalDetoxSeconds;
+  const screenTimeSeconds = Math.max(0, Number(state.screenTimeSeconds || 0));
+  const digitalDetoxSeconds = Math.max(0, Number(metrics.digitalDetoxSeconds) || 0);
 
   if (pointsDisplay) pointsDisplay.textContent = formatPoints(totalPoints);
   if (phoneFreeDisplay) phoneFreeDisplay.textContent = formatDuration(state.phoneFreeSeconds);
@@ -283,6 +285,12 @@ const tick = () => {
     state.powerOffStartedAt = now;
   }
 
+  if (!state.isTracking && !state.isPowerOff && state.screenTimeStartedAt) {
+    const elapsedSeconds = Math.max(1, Math.ceil((now - state.screenTimeStartedAt) / 1000));
+    state.screenTimeSeconds += elapsedSeconds;
+    state.screenTimeStartedAt = now;
+  }
+
   saveState();
   updateUI();
 };
@@ -290,6 +298,7 @@ const tick = () => {
 const startTracking = () => {
   state.isTracking = true;
   state.lastStartedAt = Date.now();
+  state.screenTimeStartedAt = null;
   toggleTrackingButton.textContent = '集中終了';
   saveState();
 };
@@ -297,6 +306,7 @@ const startTracking = () => {
 const stopTracking = () => {
   state.isTracking = false;
   state.lastStartedAt = null;
+  state.screenTimeStartedAt = Date.now();
   toggleTrackingButton.textContent = '集中開始';
   saveState();
 };
@@ -312,6 +322,7 @@ const toggleTracking = () => {
 const startPowerOff = () => {
   state.isPowerOff = true;
   state.powerOffStartedAt = Date.now();
+  state.screenTimeStartedAt = null;
   saveState();
   updateUI();
 };
@@ -319,6 +330,7 @@ const startPowerOff = () => {
 const stopPowerOff = () => {
   state.isPowerOff = false;
   state.powerOffStartedAt = null;
+  state.screenTimeStartedAt = Date.now();
   saveState();
   updateUI();
 };
@@ -367,7 +379,9 @@ const initializeSvgGradient = () => {
 const resetState = () => {
   state.isTracking = false;
   state.phoneFreeSeconds = 0;
+  state.screenTimeSeconds = 0;
   state.lastStartedAt = null;
+  state.screenTimeStartedAt = Date.now();
   state.isPowerOff = false;
   state.powerOffSeconds = 0;
   state.powerOffStartedAt = null;
@@ -406,6 +420,14 @@ const saveGoalTime = () => {
 };
 
 loadState();
+
+if (!state.screenTimeStartedAt) {
+  state.screenTimeStartedAt = Date.now();
+}
+if (!state.screenTimeSeconds) {
+  state.screenTimeSeconds = 0;
+}
+
 initializeSvgGradient();
 renderHistory();
 updateUI();
