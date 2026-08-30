@@ -6,12 +6,34 @@ struct DashboardView: View {
     @EnvironmentObject private var appState: AppState
     @ObservedObject private var tracker = ScreenOffTracker.shared
     @State private var isGoalSheetPresented = false
+    @State private var isShowingMoreEvents = false
+
+    private let collapsedEventCount = 3
+    private let maxExpandedEvents = 8
 
     private var dayFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
         return formatter
     }()
+
+    /// 各記録（画面ロック区間）に何ポイント割り当てるかを、時系列順の累積秒数から算出する。
+    /// 区間ごとに秒数を個別に切り捨てるのではなく、累積の切り捨て差分を使うことで、
+    /// 一覧に表示される +○P をすべて合計すると、必ずリング中央の累計ポイント（totalPoints）
+    /// と一致するようにしている。
+    private func eventPoints() -> [UUID: Int] {
+        let chronological = tracker.events.sorted { $0.offAt < $1.offAt }
+        var cumulativeSeconds: TimeInterval = 0
+        var previousPoints = 0
+        var mapping: [UUID: Int] = [:]
+        for event in chronological {
+            cumulativeSeconds += event.duration
+            let currentPoints = AppState.points(for: cumulativeSeconds)
+            mapping[event.id] = currentPoints - previousPoints
+            previousPoints = currentPoints
+        }
+        return mapping
+    }
 
     var body: some View {
         ScrollView {
@@ -235,7 +257,14 @@ struct DashboardView: View {
     }
 
     private var activityCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        // 表示件数の内訳ごとの獲得ポイントを、累積秒数の端数丸め差分から算出する。
+        // こうすることで「一覧に並んだ +○P の合計」が必ずリング中央の累計ポイントと一致する
+        // （各イベントの秒数を個別に切り捨てると端数が積み重なってズレるため）。
+        let pointsByEvent = eventPoints()
+        let visibleCount = isShowingMoreEvents ? maxExpandedEvents : collapsedEventCount
+        let visibleEvents = Array(tracker.events.prefix(visibleCount))
+
+        return VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("今日の記録").font(.headline).foregroundColor(Theme.ink)
                 Spacer()
@@ -256,7 +285,7 @@ struct DashboardView: View {
                     .multilineTextAlignment(.center)
                     .padding(.vertical, 12)
             } else {
-                ForEach(tracker.events.prefix(10)) { event in
+                ForEach(visibleEvents) { event in
                     HStack {
                         Text("\(dayFormatter.string(from: event.offAt))〜\(dayFormatter.string(from: event.onAt))")
                             .font(.caption)
@@ -269,11 +298,23 @@ struct DashboardView: View {
 
                         Spacer()
 
-                        Text("+\(AppState.points(for: event.duration))P")
+                        Text("+\(pointsByEvent[event.id] ?? 0)P")
                             .font(.footnote.weight(.bold))
                             .foregroundColor(Theme.accent)
                     }
                     .padding(.vertical, 4)
+                }
+
+                if tracker.events.count > collapsedEventCount {
+                    Button {
+                        withAnimation { isShowingMoreEvents.toggle() }
+                    } label: {
+                        Text(isShowingMoreEvents ? "閉じる" : "もっと見る")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundColor(Theme.primary)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .padding(.top, 4)
                 }
             }
         }
