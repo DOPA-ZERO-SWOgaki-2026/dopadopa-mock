@@ -15,6 +15,10 @@ struct PersistedState: Codable {
     var weeklyPoints: Int
     var weeklyStartDate: String
     var screenTimeSeconds: TimeInterval
+    /// このアプリを操作していた時間でも、画面がロックされていた時間でもない、
+    /// 「他のアプリを使っていたと推定される」時間。バックグラウンドに移行していた
+    /// 時間からロック時間分を差し引いた残りとして概算する。
+    var otherAppSeconds: TimeInterval = 0
 
     static let dailyGoalSeconds: TimeInterval = 180 * 60
 
@@ -22,8 +26,32 @@ struct PersistedState: Codable {
         goalSeconds: dailyGoalSeconds,
         weeklyPoints: 0,
         weeklyStartDate: Self.currentWeekKey(),
-        screenTimeSeconds: 0
+        screenTimeSeconds: 0,
+        otherAppSeconds: 0
     )
+
+    // otherAppSeconds は後から追加したフィールドなので、それ以前に保存された
+    // データにキーが無くてもデコードできるようにデフォルト値を補う。
+    enum CodingKeys: String, CodingKey {
+        case goalSeconds, weeklyPoints, weeklyStartDate, screenTimeSeconds, otherAppSeconds
+    }
+
+    init(goalSeconds: TimeInterval, weeklyPoints: Int, weeklyStartDate: String, screenTimeSeconds: TimeInterval, otherAppSeconds: TimeInterval = 0) {
+        self.goalSeconds = goalSeconds
+        self.weeklyPoints = weeklyPoints
+        self.weeklyStartDate = weeklyStartDate
+        self.screenTimeSeconds = screenTimeSeconds
+        self.otherAppSeconds = otherAppSeconds
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        goalSeconds = try container.decode(TimeInterval.self, forKey: .goalSeconds)
+        weeklyPoints = try container.decode(Int.self, forKey: .weeklyPoints)
+        weeklyStartDate = try container.decode(String.self, forKey: .weeklyStartDate)
+        screenTimeSeconds = try container.decode(TimeInterval.self, forKey: .screenTimeSeconds)
+        otherAppSeconds = try container.decodeIfPresent(TimeInterval.self, forKey: .otherAppSeconds) ?? 0
+    }
 
     /// 月曜始まりの週キー（例: "2026-08-24"）。script.js の getWeekKey() と同じ考え方。
     static func currentWeekKey(from date: Date = Date()) -> String {
@@ -41,7 +69,23 @@ struct PersistedState: Codable {
 struct DeviceMetrics: Codable {
     var screenTimeSeconds: TimeInterval
     var digitalDetoxSeconds: TimeInterval
+    var otherAppSeconds: TimeInterval
     var weeklyPoints: Int
+
+    init(screenTimeSeconds: TimeInterval, digitalDetoxSeconds: TimeInterval, otherAppSeconds: TimeInterval, weeklyPoints: Int) {
+        self.screenTimeSeconds = screenTimeSeconds
+        self.digitalDetoxSeconds = digitalDetoxSeconds
+        self.otherAppSeconds = otherAppSeconds
+        self.weeklyPoints = weeklyPoints
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        screenTimeSeconds = try container.decode(TimeInterval.self, forKey: .screenTimeSeconds)
+        digitalDetoxSeconds = try container.decode(TimeInterval.self, forKey: .digitalDetoxSeconds)
+        otherAppSeconds = try container.decodeIfPresent(TimeInterval.self, forKey: .otherAppSeconds) ?? 0
+        weeklyPoints = try container.decode(Int.self, forKey: .weeklyPoints)
+    }
 }
 
 struct AccountProfile: Codable {
@@ -108,12 +152,13 @@ enum Persistence {
         return fresh
     }
 
-    static func syncCurrentDeviceMetrics(username: String, screenTimeSeconds: TimeInterval, digitalDetoxSeconds: TimeInterval, weeklyPoints: Int) {
+    static func syncCurrentDeviceMetrics(username: String, screenTimeSeconds: TimeInterval, digitalDetoxSeconds: TimeInterval, otherAppSeconds: TimeInterval, weeklyPoints: Int) {
         var profiles = accountProfiles()
         var profile = profiles[username] ?? AccountProfile()
         profile.devices[deviceId()] = DeviceMetrics(
             screenTimeSeconds: max(0, screenTimeSeconds),
             digitalDetoxSeconds: max(0, digitalDetoxSeconds),
+            otherAppSeconds: max(0, otherAppSeconds),
             weeklyPoints: max(0, weeklyPoints)
         )
         profiles[username] = profile

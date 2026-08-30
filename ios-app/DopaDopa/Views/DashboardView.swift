@@ -1,4 +1,5 @@
 import SwiftUI
+import Charts
 
 /// index.html の #appContainer 相当のメイン画面。
 struct DashboardView: View {
@@ -17,6 +18,7 @@ struct DashboardView: View {
             VStack(spacing: 20) {
                 header
                 heroCard
+                usageBreakdownCard
                 statsGrid
                 bottomGrid
             }
@@ -100,6 +102,78 @@ struct DashboardView: View {
             Text(label).font(.caption2).foregroundColor(Theme.subtleInk)
             Text(value).font(.subheadline.bold()).foregroundColor(Theme.ink).monospacedDigit()
         }
+    }
+
+    // MARK: - Usage breakdown (donut chart)
+
+    /// 「DopaDopa／画面オフ／他のアプリ推定」の内訳をドーナツグラフで直感的に見せるカード。
+    ///
+    /// 注記: iOS では Apple の Screen Time API（Family Controls entitlement、Apple の
+    /// 追加審査が必要）を使わない限り、サードパーティアプリが「どのアプリを何分」という
+    /// 実際のアプリ別データを取得することはできない。そのためここでは「このアプリ」
+    /// 「画面オフ（デトックス）」「他のアプリ（推定）」の3分類にとどめている。
+    private var usageBreakdownCard: some View {
+        let slices = appState.usageBreakdown
+        let total = slices.reduce(0) { $0 + $1.seconds }
+
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("使用時間の内訳").font(.headline).foregroundColor(Theme.ink)
+                Spacer()
+                Text("推定を含む")
+                    .font(.caption2)
+                    .foregroundColor(Theme.subtleInk)
+            }
+
+            if total <= 0 {
+                Text("記録がまだありません")
+                    .font(.footnote)
+                    .foregroundColor(Theme.subtleInk)
+                    .padding(.vertical, 24)
+                    .frame(maxWidth: .infinity, alignment: .center)
+            } else {
+                HStack(spacing: 20) {
+                    Chart(slices) { slice in
+                        SectorMark(
+                            angle: .value("秒数", max(slice.seconds, 0)),
+                            innerRadius: .ratio(0.62),
+                            angularInset: 1.5
+                        )
+                        .foregroundStyle(slice.color)
+                        .cornerRadius(4)
+                    }
+                    .frame(width: 130, height: 130)
+                    .chartLegend(.hidden)
+
+                    VStack(alignment: .leading, spacing: 10) {
+                        ForEach(slices) { slice in
+                            HStack(spacing: 8) {
+                                Circle().fill(slice.color).frame(width: 8, height: 8)
+                                Text(slice.label)
+                                    .font(.caption)
+                                    .foregroundColor(Theme.subtleInk)
+                                Spacer()
+                                Text(Formatters.duration(slice.seconds))
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundColor(Theme.ink)
+                                    .monospacedDigit()
+                                Text("(\(Int((slice.seconds / total * 100).rounded()))%)")
+                                    .font(.caption2)
+                                    .foregroundColor(Theme.subtleInk)
+                            }
+                        }
+                    }
+                }
+            }
+
+            Text("※ アプリ単位の内訳（Instagram○分、など）にはApple公式のScreen Time APIが必要で、別途Apple審査が必要な特別な権限になります。")
+                .font(.caption2)
+                .foregroundColor(Theme.subtleInk)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Theme.cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: Theme.cardCorner))
     }
 
     // MARK: - Stats grid
