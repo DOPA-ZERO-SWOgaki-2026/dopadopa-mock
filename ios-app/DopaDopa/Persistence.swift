@@ -6,6 +6,9 @@ enum StorageKey {
     static let state = "dopadopa-state"
     static let accounts = "dopadopa-accounts"
     static let deviceId = "dopadopa-device-id"
+    /// フォアグラウンドを離れた時刻。アプリが完全に終了（スワイプで消される等）されても
+    /// 次回起動時に未確定分を遡って計上できるよう、メモリではなく UserDefaults に保存する。
+    static let pendingBackgroundStart = "dopadopa.pendingBackgroundStart"
 }
 
 /// `state` オブジェクト（画面オフ時間を除く、ゴール・週間ポイントなどの値）の永続化用モデル。
@@ -115,6 +118,20 @@ enum Persistence {
             UserDefaults.standard.set(username, forKey: StorageKey.user)
         } else {
             UserDefaults.standard.removeObject(forKey: StorageKey.user)
+        }
+    }
+
+    static func pendingBackgroundStart() -> Date? {
+        let value = UserDefaults.standard.double(forKey: StorageKey.pendingBackgroundStart)
+        guard value > 0 else { return nil }
+        return Date(timeIntervalSince1970: value)
+    }
+
+    static func setPendingBackgroundStart(_ date: Date?) {
+        if let date {
+            UserDefaults.standard.set(date.timeIntervalSince1970, forKey: StorageKey.pendingBackgroundStart)
+        } else {
+            UserDefaults.standard.removeObject(forKey: StorageKey.pendingBackgroundStart)
         }
     }
 

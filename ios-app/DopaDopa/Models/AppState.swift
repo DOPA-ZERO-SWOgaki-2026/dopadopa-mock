@@ -7,7 +7,8 @@ import Combine
 /// 「デジタルデトックスタイム」は `ScreenOffTracker`（画面ロック検出）を唯一の情報源とする。
 /// つまりポイントが貯まるのは Web 版のようにこのアプリをバックグラウンドに回したときではなく、
 /// 実際に **スマホの画面が消えている（ロックされている）時間** に対してのみ。
-/// 「スクリーンタイム」はこのアプリを開いて見ている時間（フォアグラウンド時間）。
+/// 「スクリーンタイム」は画面がついていたトータルの時間（このアプリを見ていた時間 +
+/// 他のアプリを使っていたと推定される時間）で、デジタルデトックスタイムの対になる値。
 final class AppState: ObservableObject {
     static let shared = AppState()
 
@@ -24,10 +25,6 @@ final class AppState: ObservableObject {
 
     private var lastPointsSnapshot: Int
     private var tickTimer: Timer?
-    /// フォアグラウンドを離れた瞬間の時刻。次にフォアグラウンドへ戻ったときに、
-    /// その間の経過時間から「画面ロックされていた時間」を差し引いた残りを
-    /// otherAppSeconds（他アプリ利用の推定）へ加算するために使う。
-    private var backgroundedAt: Date?
     private var cancellables = Set<AnyCancellable>()
 
     private init() {
@@ -47,12 +44,21 @@ final class AppState: ObservableObject {
             .sink { [weak self] _ in self?.handleDetoxChange() }
             .store(in: &cancellables)
 
+        // 前回フォアグラウンドを離れたまま（バックグラウンドで一時停止、または
+        // スワイプ等で完全終了）だった場合、起動直後にその間の未確定分を計上する。
+        // scenePhase の変化通知だけに頼ると、強制終了→再起動のケースを取りこぼすため。
+        reconcileBackgroundGap()
+
         startTicking()
     }
 
     // MARK: - Derived values
 
     var digitalDetoxSeconds: TimeInterval { tracker.combinedSeconds }
+    /// 「スクリーンタイム」表示用の値。DopaDopa を見ていた時間だけでなく、
+    /// 他のアプリを使っていた（＝画面はついていた）推定時間も合わせた、
+    /// 画面が点灯していたトータルの時間。
+    var totalScreenOnSeconds: TimeInterval { screenTimeSeconds + otherAppSeconds }
     var totalPoints: Int { Self.points(for: digitalDetoxSeconds) }
     var goalRatio: Double { min(digitalDetoxSeconds / max(goalSeconds, 1), 1) }
     var remainingSeconds: TimeInterval { max(goalSeconds - digitalDetoxSeconds, 0) }
@@ -119,20 +125,27 @@ final class AppState: ObservableObject {
         isForeground = (phase == .active)
 
         if wasForeground && !isForeground {
-            // フォアグラウンドを離れた瞬間を記録しておく。
-            backgroundedAt = Date()
+            // フォアグラウンドを離れた瞬間を UserDefaults に記録しておく。
+            // アプリが完全終了させられても次回起動時に読み直せるように、
+            // メモリ上の変数ではなく永続化した値を使う。
+            Persistence.setPendingBackgroundStart(Date())
         } else if !wasForeground && isForeground {
             reconcileBackgroundGap()
         }
     }
 
-    /// バックグラウンドにいた間の経過時間のうち、画面ロック（ScreenOffTracker が計測済み）
-    /// と重ならない残りを「他のアプリを使っていた時間」として概算計上する。
-    /// これにより、他のアプリへ切り替えていた時間が集計から丸ごと抜け落ちて
-    /// 「時間が飛んでいる」ように見える問題を解消する。
+    /// バックグラウンドにいた間（アプリを閉じていた間）の経過時間のうち、
+    /// 画面ロック（ScreenOffTracker が計測済み）と重ならない残りを
+    /// 「他のアプリを使っていた時間」として概算計上する。
+    /// これにより、アプリを閉じて他のアプリを使っていた時間が集計から丸ごと
+    /// 抜け落ちて「スクリーンタイムが増えない」ように見える問題を解消する。
+    /// UserDefaults 経由で記録しているため、バックグラウンドで一時停止していた
+    /// 場合だけでなく、スワイプ等でアプリを完全終了して後から開き直した場合も
+    /// 正しく遡って計上できる。
     private func reconcileBackgroundGap() {
-        defer { backgroundedAt = nil }
-        guard let start = backgroundedAt else { return }
+        guard let start = Persistence.pendingBackgroundStart() else { return }
+        defer { Persistence.setPendingBackgroundStart(nil) }
+
         let now = Date()
         let elapsed = now.timeIntervalSince(start)
         guard elapsed > 0 else { return }

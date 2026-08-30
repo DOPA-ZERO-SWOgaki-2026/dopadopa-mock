@@ -106,7 +106,7 @@ struct DashboardView: View {
                     .frame(width: 150, height: 150)
 
                 VStack(alignment: .leading, spacing: 12) {
-                    miniStat(label: "スクリーンタイム", value: Formatters.duration(appState.screenTimeSeconds))
+                    miniStat(label: "スクリーンタイム", value: Formatters.duration(appState.totalScreenOnSeconds))
                     miniStat(label: "デジタルデトックスタイム", value: Formatters.duration(appState.digitalDetoxSeconds))
                     miniStat(label: "目標達成率", value: "\(Int((appState.goalRatio * 100).rounded()))%")
                 }
