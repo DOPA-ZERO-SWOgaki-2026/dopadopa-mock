@@ -9,6 +9,6 @@ import Foundation
 /// ターゲットに "App Groups" capability が付いていて、同じグループ ID を
 /// 指しているか確認してください。
 enum AppGroup {
-    static let identifier = "group.com.example.dopadopa"
+    static let identifier = "group.com.example.dopadopaA"
     static let defaults: UserDefaults = UserDefaults(suiteName: identifier) ?? .standard
 }

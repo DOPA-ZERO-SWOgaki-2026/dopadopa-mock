@@ -52,7 +52,7 @@ iOS のサードパーティアプリには、Android の `ACTION_SCREEN_OFF` �
 - ロック画面ウィジェット: 円形（Gauge）／横長／インライン の3種類
 
 ウィジェットはメインアプリと別プロセスで動くため、**App Group**
-（`group.com.example.dopadopa`）経由で `UserDefaults` を共有しています
+（`group.com.example.dopadopaA`）経由で `UserDefaults` を共有しています
 （`AppGroup.swift`）。`Persistence.swift` と `ScreenOffTracker.swift` は
 メインアプリ・ウィジェット両方のターゲットに含まれており、同じキーを読み書きします。
 
@@ -61,7 +61,7 @@ iOS のサードパーティアプリには、Android の `ACTION_SCREEN_OFF` �
 （Apple への追加審査は不要です）。もしビルドエラーになる場合は、
 Signing & Capabilities タブで `DopaDopa` と `DopaDopaWidgetExtension` の
 両方に "App Groups" capability が付いており、同じグループ ID
-（`group.com.example.dopadopa`）を指しているか確認してください。
+（`group.com.example.dopadopaA`）を指しているか確認してください。
 
 ウィジェットは常時起動しているわけではなく、iOS が決めたタイミング（本プロジェクトでは
 15分ごとを目安にリクエスト）でしかタイムラインが更新されないため、メイン画面ほど
