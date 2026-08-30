@@ -8,3 +8,9 @@
 /captures/
 .externalNativeBuild/
 .cxx/
+
+# Xcode / iOS
+xcuserdata/
+*.xcuserstate
+DerivedData/
+ios-app/build/
