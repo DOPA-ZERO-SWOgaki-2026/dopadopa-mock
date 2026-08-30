@@ -7,6 +7,7 @@ struct DashboardView: View {
     @ObservedObject private var tracker = ScreenOffTracker.shared
     @State private var isGoalSheetPresented = false
     @State private var isShowingMoreEvents = false
+    @State private var isShowingAllRewards = false
 
     private let collapsedEventCount = 3
     private let maxExpandedEvents = 8
@@ -324,13 +325,39 @@ struct DashboardView: View {
         .clipShape(RoundedRectangle(cornerRadius: Theme.cardCorner))
     }
 
+    /// 獲得できる特典の一覧。今後アイテムが増える想定なので、ここに追加していけば
+    /// 自動的に「もっと見る」ボタンで一覧表示されるようになる。
+    private static let allRewards: [Reward] = [
+        Reward(emoji: "☕", title: "カフェ無料ドリンク", points: "1,200P"),
+        Reward(emoji: "🎧", title: "シャープペン", points: "2,500P"),
+        Reward(emoji: "📚", title: "図書券", points: "4,800P"),
+    ]
+
+    private let rewardsCollapsedCount = 3
+
     private var rewardsCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        let visibleRewards = isShowingAllRewards
+            ? Self.allRewards
+            : Array(Self.allRewards.prefix(rewardsCollapsedCount))
+
+        return VStack(alignment: .leading, spacing: 12) {
             Text("獲得できる特典").font(.headline).foregroundColor(Theme.ink)
 
-            rewardRow(emoji: "☕", title: "カフェ無料ドリンク", points: "1,200P")
-            rewardRow(emoji: "🎧", title: "シャープペン", points: "2,500P")
-            rewardRow(emoji: "📚", title: "図書券", points: "4,800P")
+            ForEach(visibleRewards) { reward in
+                rewardRow(emoji: reward.emoji, title: reward.title, points: reward.points)
+            }
+
+            if Self.allRewards.count > rewardsCollapsedCount {
+                Button {
+                    withAnimation { isShowingAllRewards.toggle() }
+                } label: {
+                    Text(isShowingAllRewards ? "閉じる" : "もっと見る")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundColor(Theme.primary)
+                        .frame(maxWidth: .infinity)
+                }
+                .padding(.top, 4)
+            }
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -348,6 +375,14 @@ struct DashboardView: View {
             Spacer()
         }
     }
+}
+
+/// 獲得できる特典 1 件分。
+private struct Reward: Identifiable {
+    let id = UUID()
+    let emoji: String
+    let title: String
+    let points: String
 }
 
 /// #ringProgress の SVG リングを SwiftUI で再現したもの。

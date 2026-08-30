@@ -97,7 +97,7 @@ struct AccountProfile: Codable {
 
 enum Persistence {
     static func loadState() -> PersistedState {
-        guard let data = AppGroup.defaults.data(forKey: StorageKey.state),
+        guard let data = UserDefaults.standard.data(forKey: StorageKey.state),
               let decoded = try? JSONDecoder().decode(PersistedState.self, from: data) else {
             return .initial
         }
@@ -106,46 +106,46 @@ enum Persistence {
 
     static func saveState(_ state: PersistedState) {
         guard let data = try? JSONEncoder().encode(state) else { return }
-        AppGroup.defaults.set(data, forKey: StorageKey.state)
+        UserDefaults.standard.set(data, forKey: StorageKey.state)
     }
 
     static func currentUser() -> String? {
-        AppGroup.defaults.string(forKey: StorageKey.user)
+        UserDefaults.standard.string(forKey: StorageKey.user)
     }
 
     static func setCurrentUser(_ username: String?) {
         if let username, !username.isEmpty {
-            AppGroup.defaults.set(username, forKey: StorageKey.user)
+            UserDefaults.standard.set(username, forKey: StorageKey.user)
         } else {
-            AppGroup.defaults.removeObject(forKey: StorageKey.user)
+            UserDefaults.standard.removeObject(forKey: StorageKey.user)
         }
     }
 
     static func pendingBackgroundStart() -> Date? {
-        let value = AppGroup.defaults.double(forKey: StorageKey.pendingBackgroundStart)
+        let value = UserDefaults.standard.double(forKey: StorageKey.pendingBackgroundStart)
         guard value > 0 else { return nil }
         return Date(timeIntervalSince1970: value)
     }
 
     static func setPendingBackgroundStart(_ date: Date?) {
         if let date {
-            AppGroup.defaults.set(date.timeIntervalSince1970, forKey: StorageKey.pendingBackgroundStart)
+            UserDefaults.standard.set(date.timeIntervalSince1970, forKey: StorageKey.pendingBackgroundStart)
         } else {
-            AppGroup.defaults.removeObject(forKey: StorageKey.pendingBackgroundStart)
+            UserDefaults.standard.removeObject(forKey: StorageKey.pendingBackgroundStart)
         }
     }
 
     static func deviceId() -> String {
-        if let existing = AppGroup.defaults.string(forKey: StorageKey.deviceId) {
+        if let existing = UserDefaults.standard.string(forKey: StorageKey.deviceId) {
             return existing
         }
         let generated = "device-\(UUID().uuidString)"
-        AppGroup.defaults.set(generated, forKey: StorageKey.deviceId)
+        UserDefaults.standard.set(generated, forKey: StorageKey.deviceId)
         return generated
     }
 
     static func accountProfiles() -> [String: AccountProfile] {
-        guard let data = AppGroup.defaults.data(forKey: StorageKey.accounts),
+        guard let data = UserDefaults.standard.data(forKey: StorageKey.accounts),
               let decoded = try? JSONDecoder().decode([String: AccountProfile].self, from: data) else {
             return [:]
         }
@@ -154,7 +154,7 @@ enum Persistence {
 
     static func saveAccountProfiles(_ profiles: [String: AccountProfile]) {
         guard let data = try? JSONEncoder().encode(profiles) else { return }
-        AppGroup.defaults.set(data, forKey: StorageKey.accounts)
+        UserDefaults.standard.set(data, forKey: StorageKey.accounts)
     }
 
     @discardableResult

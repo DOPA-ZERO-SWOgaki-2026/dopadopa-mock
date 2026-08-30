@@ -57,9 +57,9 @@ final class ScreenOffTracker: ObservableObject {
     private var offStartDate: Date? {
         didSet {
             if let offStartDate {
-                AppGroup.defaults.set(offStartDate.timeIntervalSince1970, forKey: Keys.offStartDate)
+                UserDefaults.standard.set(offStartDate.timeIntervalSince1970, forKey: Keys.offStartDate)
             } else {
-                AppGroup.defaults.removeObject(forKey: Keys.offStartDate)
+                UserDefaults.standard.removeObject(forKey: Keys.offStartDate)
             }
         }
     }
@@ -67,15 +67,14 @@ final class ScreenOffTracker: ObservableObject {
     private var displayTimer: Timer?
     private var cancellables = Set<AnyCancellable>()
 
-    /// ウィジェット側からも同じキーで App Group の共有領域を読むために internal にしている。
-    enum Keys {
+    private enum Keys {
         static let totalSeconds = "screenOffTracker.totalSeconds"
         static let offStartDate = "screenOffTracker.offStartDate"
         static let events = "screenOffTracker.events"
     }
 
     private init() {
-        let defaults = AppGroup.defaults
+        let defaults = UserDefaults.standard
         totalScreenOffSeconds = defaults.double(forKey: Keys.totalSeconds)
 
         if let data = defaults.data(forKey: Keys.events),
@@ -89,7 +88,7 @@ final class ScreenOffTracker: ObservableObject {
             let savedStart = Date(timeIntervalSince1970: defaults.double(forKey: Keys.offStartDate))
             totalScreenOffSeconds += Date().timeIntervalSince(savedStart)
             persistTotal()
-            AppGroup.defaults.removeObject(forKey: Keys.offStartDate)
+            UserDefaults.standard.removeObject(forKey: Keys.offStartDate)
         }
 
         observeNotifications()
@@ -152,12 +151,12 @@ final class ScreenOffTracker: ObservableObject {
     }
 
     private func persistTotal() {
-        AppGroup.defaults.set(totalScreenOffSeconds, forKey: Keys.totalSeconds)
+        UserDefaults.standard.set(totalScreenOffSeconds, forKey: Keys.totalSeconds)
     }
 
     private func persistEvents() {
         guard let data = try? JSONEncoder().encode(events) else { return }
-        AppGroup.defaults.set(data, forKey: Keys.events)
+        UserDefaults.standard.set(data, forKey: Keys.events)
     }
 
     /// 累積計測時間・履歴をリセットする

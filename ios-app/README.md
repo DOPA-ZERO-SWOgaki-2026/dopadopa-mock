@@ -43,54 +43,21 @@ iOS のサードパーティアプリには、Android の `ACTION_SCREEN_OFF` �
 | ログイン画面 | `LoginView` |
 | メイン画面（リング・週間ポイント・特典など） | `DashboardView` |
 
-## ウィジェット（ホーム画面 / ロック画面）
-
-`DopaDopaWidget` は Widget Extension ターゲットで、累計ポイント（リング）と今日の
-デジタルデトックスタイムをホーム画面・ロック画面に表示します。
-
-- ホーム画面ウィジェット（小・中サイズ）: リング＋累計ポイント、デジタルデトックスタイム
-- ロック画面ウィジェット: 円形（Gauge）／横長／インライン の3種類
-
-ウィジェットはメインアプリと別プロセスで動くため、**App Group**
-（`group.com.example.dopadopaA`）経由で `UserDefaults` を共有しています
-（`AppGroup.swift`）。`Persistence.swift` と `ScreenOffTracker.swift` は
-メインアプリ・ウィジェット両方のターゲットに含まれており、同じキーを読み書きします。
-
-初回ビルド時の注意: Xcode の「Automatically manage signing」が有効であれば、
-この App Group は初回ビルド時にあなたの Apple ID / Team に自動登録されます
-（Apple への追加審査は不要です）。もしビルドエラーになる場合は、
-Signing & Capabilities タブで `DopaDopa` と `DopaDopaWidgetExtension` の
-両方に "App Groups" capability が付いており、同じグループ ID
-（`group.com.example.dopadopaA`）を指しているか確認してください。
-
-ウィジェットは常時起動しているわけではなく、iOS が決めたタイミング（本プロジェクトでは
-15分ごとを目安にリクエスト）でしかタイムラインが更新されないため、メイン画面ほど
-リアルタイムには反映されません（これは WidgetKit の仕様であり、頻度を上げることはできません）。
-
 ## フォルダ構成
 
 ```
 ios-app/
   DopaDopa.xcodeproj/
-  DopaDopa/                        # メインアプリターゲット
-    DopaDopaApp.swift              # アプリのエントリーポイント
-    ContentView.swift              # ログイン画面 / メイン画面の出し分け
-    ScreenOffTracker.swift         # 画面ロック検出（SW_ogaki 由来。ウィジェットとも共有）
-    Persistence.swift              # UserDefaults への保存・読み込み、フォーマッタ（ウィジェットとも共有）
-    AppGroup.swift                 # メインアプリ/ウィジェット間のデータ共有設定
-    DopaDopa.entitlements          # App Groups capability
-    Theme.swift                    # 配色（style.css の色を移植）
+  DopaDopa/
+    DopaDopaApp.swift        # アプリのエントリーポイント
+    ContentView.swift        # ログイン画面 / メイン画面の出し分け
+    ScreenOffTracker.swift   # 画面ロック検出（SW_ogaki 由来）
+    Persistence.swift        # UserDefaults への保存・読み込み、フォーマッタ
+    Theme.swift              # 配色（style.css の色を移植）
     Models/
-      AppState.swift               # 画面横断のビューモデル（ポイント計算・週間リセットなど）
+      AppState.swift         # 画面横断のビューモデル（ポイント計算・週間リセットなど）
     Views/
       LoginView.swift
       DashboardView.swift
       GoalSheetView.swift
-  DopaDopaWidget/                  # Widget Extension ターゲット
-    DopaDopaWidgetBundle.swift     # @main（ホーム画面＋ロック画面ウィジェットをまとめる）
-    WidgetSnapshotData.swift       # App Group からのデータ読み込み
-    DopaDopaHomeWidget.swift       # ホーム画面ウィジェット（小・中）
-    DopaDopaLockScreenWidget.swift # ロック画面ウィジェット（円形/横長/インライン）
-    Info.plist
-    DopaDopaWidgetExtension.entitlements
 ```
