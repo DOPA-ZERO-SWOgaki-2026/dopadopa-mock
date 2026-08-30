@@ -22,6 +22,7 @@ const goalRatio = document.getElementById('goalRatio');
 const ringProgress = document.getElementById('ringProgress');
 
 const weeklyPoints = document.getElementById('weeklyPoints');
+const weeklyTrend = document.getElementById('weeklyTrend');
 const bestRecord = document.getElementById('bestRecord');
 const dailyTarget = document.getElementById('dailyTarget');
 const dailyProgressText = document.getElementById('dailyProgressText');
@@ -525,6 +526,17 @@ state.weeklyPoints
 );
 }
 
+if (weeklyTrend) {
+const weeklyGain = Math.max(
+0,
+Math.floor(
+Number(state.weeklyPoints) || 0
+)
+);
+weeklyTrend.textContent =
+`+${weeklyGain.toLocaleString()}P 今週`;
+}
+
 if (dailyTarget) {
 dailyTarget.textContent =
 `${Math.floor(
@@ -630,6 +642,14 @@ state.weeklyPoints +=
 }
 };
 
+const isPageActive = () => {
+return (
+document.visibilityState ===
+'visible' &&
+document.hasFocus()
+);
+};
+
 const calculateElapsedTime = () => {
 const now = Date.now();
 
@@ -651,10 +671,7 @@ elapsedSeconds <= 0
 return;
 }
 
-if (
-document.visibilityState ===
-'visible'
-) {
+if (isPageActive()) {
 state.screenTimeSeconds +=
 elapsedSeconds;
 } else {
@@ -692,16 +709,13 @@ state.lastActiveAt) /
 if (
 elapsedSeconds > 0
 ) {
-if (
-document.visibilityState ===
-'hidden'
-) {
+if (isPageActive()) {
+state.screenTimeSeconds +=
+elapsedSeconds;
+} else {
 addDetoxTime(
 elapsedSeconds
 );
-} else {
-state.screenTimeSeconds +=
-elapsedSeconds;
 }
 }
 
@@ -924,10 +938,13 @@ document.addEventListener(
 'visibilitychange',
 handleVisibilityChange
 );
-
-setInterval(
-tick,
-1000
+window.addEventListener(
+'blur',
+handleVisibilityChange
+);
+window.addEventListener(
+'focus',
+handleVisibilityChange
 );
 
 if (goalSettingButton) {
