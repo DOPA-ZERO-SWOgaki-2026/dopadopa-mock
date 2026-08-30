@@ -717,13 +717,15 @@ addDetoxTime(
 elapsedSeconds
 );
 }
-}
 
 state.lastActiveAt = now;
 
 saveState();
 
 updateUI();
+} else {
+state.lastActiveAt = now;
+}
 };
 
 const handleLogin = (
@@ -928,6 +930,11 @@ renderHistory();
 
 updateUI();
 
+// 初回の時刻を正確に記録（イベント発火による重複カウントを防ぐ）
+if (!state.lastActiveAt) {
+state.lastActiveAt = Date.now();
+}
+
 if (getCurrentUser()) {
 showApp();
 } else {
@@ -936,14 +943,6 @@ showLogin();
 
 document.addEventListener(
 'visibilitychange',
-handleVisibilityChange
-);
-window.addEventListener(
-'blur',
-handleVisibilityChange
-);
-window.addEventListener(
-'focus',
 handleVisibilityChange
 );
 
