@@ -17,7 +17,41 @@
 		A98B316522EC9735A826DBD4 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5FE4C3EDF0E0139A6C74294 /* DashboardView.swift */; };
 		CA2A5A5DC3AC9A5B29294C78 /* GoalSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045EE9D8C10C371316DF85BA /* GoalSheetView.swift */; };
 		7E5577D8A0F78A583D7D31D9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 87213EF844121C01FEE02536 /* Assets.xcassets */; };
+		0F8019E5F7D869E7DCA341F0 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 278D09855E63566D1C5C5965 /* AppGroup.swift */; };
+		0A628CEE1D141350565AC23E /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 278D09855E63566D1C5C5965 /* AppGroup.swift */; };
+		4814C7C35C6552CF5051CC72 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001DD7FAD2BCD84258701B74 /* Persistence.swift */; };
+		44A791E83F80BA0772E5D340 /* ScreenOffTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C0FD9F48124D9E6ACDC8F05 /* ScreenOffTracker.swift */; };
+		ED7798A7104F3D6E4AD7392B /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038B598FECD2D4354490B7FC /* Theme.swift */; };
+		8A1E85AB137C17D375F0950C /* DopaDopaWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698C8F899BDEC249517CD042 /* DopaDopaWidgetBundle.swift */; };
+		4C4E3D8F8D373F9FB169AB6D /* WidgetSnapshotData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E87833BEB05092C34920D510 /* WidgetSnapshotData.swift */; };
+		6F8FD7343C16550CF2AE4A53 /* DopaDopaHomeWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11FC47FF586ABBCEAC1C5BFC /* DopaDopaHomeWidget.swift */; };
+		F922C264E0D689770D25897A /* DopaDopaLockScreenWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87FC70D774A55F69F5DE27ED /* DopaDopaLockScreenWidget.swift */; };
+		8C8F7C6D83E7986823637827 /* DopaDopaWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2F7CBE5534A82A2134A5923F /* DopaDopaWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeaderOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		53FFAFDE004276118A86F6B4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BE4CC9469EF4B2B02487EF7C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8141201E697599DB327BEFCC;
+			remoteInfo = DopaDopaWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		55D5535BF53602A3C501E136 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				8C8F7C6D83E7986823637827 /* DopaDopaWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		4D6E4E5237609A5609B4DBDD /* DopaDopa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DopaDopa.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -31,10 +65,26 @@
 		E5FE4C3EDF0E0139A6C74294 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/DashboardView.swift; sourceTree = "<group>"; };
 		045EE9D8C10C371316DF85BA /* GoalSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/GoalSheetView.swift; sourceTree = "<group>"; };
 		87213EF844121C01FEE02536 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		278D09855E63566D1C5C5965 /* AppGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGroup.swift; sourceTree = "<group>"; };
+		EE16FE568604114E5B6C0462 /* DopaDopa.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DopaDopa.entitlements; sourceTree = "<group>"; };
+		2F7CBE5534A82A2134A5923F /* DopaDopaWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DopaDopaWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		698C8F899BDEC249517CD042 /* DopaDopaWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DopaDopaWidgetBundle.swift; sourceTree = "<group>"; };
+		E87833BEB05092C34920D510 /* WidgetSnapshotData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSnapshotData.swift; sourceTree = "<group>"; };
+		11FC47FF586ABBCEAC1C5BFC /* DopaDopaHomeWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DopaDopaHomeWidget.swift; sourceTree = "<group>"; };
+		87FC70D774A55F69F5DE27ED /* DopaDopaLockScreenWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DopaDopaLockScreenWidget.swift; sourceTree = "<group>"; };
+		23ADEEB9E534222261CB12AC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D550D1B8953E05F0D682F431 /* DopaDopaWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DopaDopaWidgetExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		192A797A1CC999597A854BD4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0FB65B5D0A334BA6EAEFB77F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -48,6 +98,7 @@
 			isa = PBXGroup;
 			children = (
 				54572128F975E960EB3AB07C /* DopaDopa */,
+				08AC23221FE601ED96DB97FD /* DopaDopaWidget */,
 				BF86CCE68C5DDDB6A242A425 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -56,6 +107,7 @@
 			isa = PBXGroup;
 			children = (
 				4D6E4E5237609A5609B4DBDD /* DopaDopa.app */,
+				2F7CBE5534A82A2134A5923F /* DopaDopaWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -68,13 +120,28 @@
 				BE24DC213A20C611CA217F12 /* AppState.swift */,
 				5C0FD9F48124D9E6ACDC8F05 /* ScreenOffTracker.swift */,
 				001DD7FAD2BCD84258701B74 /* Persistence.swift */,
+				278D09855E63566D1C5C5965 /* AppGroup.swift */,
 				038B598FECD2D4354490B7FC /* Theme.swift */,
 				6BBA21B32ECEB501282CA97C /* LoginView.swift */,
 				E5FE4C3EDF0E0139A6C74294 /* DashboardView.swift */,
 				045EE9D8C10C371316DF85BA /* GoalSheetView.swift */,
 				87213EF844121C01FEE02536 /* Assets.xcassets */,
+				EE16FE568604114E5B6C0462 /* DopaDopa.entitlements */,
 			);
 			path = DopaDopa;
+			sourceTree = "<group>";
+		};
+		08AC23221FE601ED96DB97FD /* DopaDopaWidget */ = {
+			isa = PBXGroup;
+			children = (
+				698C8F899BDEC249517CD042 /* DopaDopaWidgetBundle.swift */,
+				11FC47FF586ABBCEAC1C5BFC /* DopaDopaHomeWidget.swift */,
+				87FC70D774A55F69F5DE27ED /* DopaDopaLockScreenWidget.swift */,
+				E87833BEB05092C34920D510 /* WidgetSnapshotData.swift */,
+				23ADEEB9E534222261CB12AC /* Info.plist */,
+				D550D1B8953E05F0D682F431 /* DopaDopaWidgetExtension.entitlements */,
+			);
+			path = DopaDopaWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -87,15 +154,34 @@
 				3DB7E1D36F7BA816184E782E /* Sources */,
 				192A797A1CC999597A854BD4 /* Frameworks */,
 				BBEFF8242072F6A268BCB4A6 /* Resources */,
+				55D5535BF53602A3C501E136 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				4BFB31B3CD4320CFCA474643 /* PBXTargetDependency */,
 			);
 			name = DopaDopa;
 			productName = DopaDopa;
 			productReference = 4D6E4E5237609A5609B4DBDD /* DopaDopa.app */;
 			productType = "com.apple.product-type.application";
+		};
+		8141201E697599DB327BEFCC /* DopaDopaWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0032061266D3AA24FE819A5A /* Build configuration list for PBXNativeTarget "DopaDopaWidgetExtension" */;
+			buildPhases = (
+				8ACC3B0EA94B59F5A8F247E6 /* Sources */,
+				0FB65B5D0A334BA6EAEFB77F /* Frameworks */,
+				0AFB3B0A7A2DEBEF0587FE12 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DopaDopaWidgetExtension;
+			productName = DopaDopaWidgetExtension;
+			productReference = 2F7CBE5534A82A2134A5923F /* DopaDopaWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -108,6 +194,9 @@
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					9C3DD42204376637B30C7160 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					8141201E697599DB327BEFCC = {
 						CreatedOnToolsVersion = 16.0;
 					};
 				};
@@ -126,6 +215,7 @@
 			projectRoot = "";
 			targets = (
 				9C3DD42204376637B30C7160 /* DopaDopa */,
+				8141201E697599DB327BEFCC /* DopaDopaWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -136,6 +226,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				7E5577D8A0F78A583D7D31D9 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0AFB3B0A7A2DEBEF0587FE12 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -151,6 +248,7 @@
 				C771357A53CA5CB76E85B8F8 /* AppState.swift in Sources */,
 				323954C0150FFB5DF84EFED6 /* ScreenOffTracker.swift in Sources */,
 				A488A0525B635E279B38CC16 /* Persistence.swift in Sources */,
+				0F8019E5F7D869E7DCA341F0 /* AppGroup.swift in Sources */,
 				8CE65164D1D8BBA1C3E5FFB5 /* Theme.swift in Sources */,
 				73AF92FCBEAF27BC9249C65B /* LoginView.swift in Sources */,
 				A98B316522EC9735A826DBD4 /* DashboardView.swift in Sources */,
@@ -158,7 +256,30 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8ACC3B0EA94B59F5A8F247E6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8A1E85AB137C17D375F0950C /* DopaDopaWidgetBundle.swift in Sources */,
+				6F8FD7343C16550CF2AE4A53 /* DopaDopaHomeWidget.swift in Sources */,
+				F922C264E0D689770D25897A /* DopaDopaLockScreenWidget.swift in Sources */,
+				4C4E3D8F8D373F9FB169AB6D /* WidgetSnapshotData.swift in Sources */,
+				0A628CEE1D141350565AC23E /* AppGroup.swift in Sources */,
+				4814C7C35C6552CF5051CC72 /* Persistence.swift in Sources */,
+				44A791E83F80BA0772E5D340 /* ScreenOffTracker.swift in Sources */,
+				ED7798A7104F3D6E4AD7392B /* Theme.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4BFB31B3CD4320CFCA474643 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8141201E697599DB327BEFCC /* DopaDopaWidgetExtension */;
+			targetProxy = 53FFAFDE004276118A86F6B4 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		90ED5711BC3E6B4DD3D82858 /* Debug */ = {
@@ -285,6 +406,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = DopaDopa/DopaDopa.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -314,6 +436,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = DopaDopa/DopaDopa.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -338,6 +461,56 @@
 			};
 			name = Release;
 		};
+		4A5DB2975822B4FF9A1E1DBC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = DopaDopaWidget/DopaDopaWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DopaDopaWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DopaDopa;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.dopadopa.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4DEC139A16C98E5E9079D9EF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = DopaDopaWidget/DopaDopaWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DopaDopaWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DopaDopa;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.dopadopa.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -355,6 +528,15 @@
 			buildConfigurations = (
 				2A4A3BF1F02E54C9FCCA98DD /* Debug */,
 				DB591C56F199818AA0EE21CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0032061266D3AA24FE819A5A /* Build configuration list for PBXNativeTarget "DopaDopaWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4A5DB2975822B4FF9A1E1DBC /* Debug */,
+				4DEC139A16C98E5E9079D9EF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
