@@ -27,3 +27,9 @@ http://172.16.130.25:8000
 ## Android アプリについて
 
 `android-app` は別途 Android アプリの実装です。Web アプリと同じデータ連携を行うには、将来的に API を追加する設計が必要です。
+
+## iOS アプリについて
+
+`ios-app` は Swift（SwiftUI）によるネイティブ iOS アプリの実装です。`SW_ogaki` プロジェクトで実証されていた
+画面ロック検出の仕組み（`UIApplication` の protectedData 通知）を移植し、スマホの画面が実際に消えている時間を
+計測してポイントに変換します。詳細は `ios-app/README.md` を参照してください。
