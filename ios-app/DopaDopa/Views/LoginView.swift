@@ -44,6 +44,8 @@ struct LoginView: View {
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                         .focused($isFieldFocused)
+                        .foregroundColor(Theme.ink)
+                        .tint(Theme.primary)
                         .padding(12)
                         .background(Theme.background)
                         .clipShape(RoundedRectangle(cornerRadius: Theme.controlCorner))
