@@ -26,7 +26,10 @@ http://172.16.130.25:8000
 
 ## Android アプリについて
 
-`android-app` は別途 Android アプリの実装です。Web アプリと同じデータ連携を行うには、将来的に API を追加する設計が必要です。
+`android-app` は Kotlin（Jetpack Compose）によるネイティブ Android アプリの実装です。iOS 版と同じ
+「スマホを見ない時間でポイントが貯まる」体験を、Android 標準の画面ロック検出（`ACTION_SCREEN_OFF` /
+`ACTION_SCREEN_ON`）を使って計測します。詳細は `android-app/README.md` を参照してください。
+Web アプリと同じデータ連携を行うには、将来的に API を追加する設計が必要です。
 
 ## iOS アプリについて
 

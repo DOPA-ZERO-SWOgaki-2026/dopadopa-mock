@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- 画面ロック計測を続けるためのフォアグラウンドサービス用 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <!-- Android 13+ でフォアグラウンドサービスの通知を表示するために必要 -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- 端末再起動後もバックグラウンド計測サービスを再開するため -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
+        android:name=".DopaDopaApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="DopaDopa"
@@ -16,6 +25,25 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 画面ロック(ACTION_SCREEN_OFF/ON)を監視し続けるための常駐サービス。
+             SW_ogaki の仕組みを Android ネイティブの screen state API で実現したもの。 -->
+        <service
+            android:name=".tracker.ScreenTrackingService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="screen_state_tracking_for_digital_detox_points" />
+        </service>
+
+        <receiver
+            android:name=".tracker.BootCompletedReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
